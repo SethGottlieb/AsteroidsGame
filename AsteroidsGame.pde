@@ -3,25 +3,35 @@ boolean LeftIsPressed = false;
 boolean RightIsPressed = false;
 boolean ShiftIsPressed = false;
 
-NormalParticle[] Stars;
-
+Star[] sField;
+Asteroid[] aField;
 SpaceShip Normandy = new SpaceShip();
 public void setup() 
 {
 	size(1200, 900);
-	Stars = new NormalParticle[1000];
-	for (int i = 0; i < Stars.length; i++) 
-	{
-		Stars[i] = new NormalParticle();
+	sField = new Star[400];
+	for (int i = 0; i < sField.length; ++i) {
+		sField[i] = new Star();
+	}
+	aField = new Asteroid[10];
+	for (int i = 0; i < aField.length; i++) {
+		aField[i] = new Asteroid();
+		aField[i].setDirectionX(Math.random()*20-10);
+		aField[i].setDirectionY(Math.random()*20-10);
 	}
 }
 public void draw() 
 {
 	background(0);
-	for (int i = 0; i < Stars.length; i++) 
-	{
-		Stars[i].move();
-		Stars[i].show();
+
+	for (int i = 0; i < sField.length; ++i) {
+		sField[i].show();
+	}
+
+	for (int i = 0; i < aField.length; i++) {
+		aField[i].move();
+		aField[i].show();
+		aField[i].rotate((int)(Math.random()*8));
 	}
 	Normandy.move();
 	Normandy.show();
@@ -80,33 +90,6 @@ public void keyReleased()
 		ShiftIsPressed = false;
 	}
 }
-class NormalParticle
-{
-	double pX, pY, pSize, pSpeed, pTheta;
-	int pR, pG, pB;
-	NormalParticle()
-	{
-		pX = width/2;
-		pY = height/2;
-		pSize = Math.random()*6+1;
-		pSpeed = Math.random()*5;
-		pTheta = Math.random()*360+1;
-		pR = (int)(Math.random()*255+1);
-		pG = (int)(Math.random()*255+1);
-		pB = (int)(Math.random()*255+1);
-	}
-	public void move()
-	{
-		pX += Math.cos(pTheta) * pSpeed;
-		pY += Math.sin(pTheta) * pSpeed;
-	}
-	public void show()
-	{
-		noStroke();
-		fill(pR, pB, pG, 175);
-		ellipse((float)pX, (float)pY, (float)pSize, (float)pSize);
-	}
-}
 class SpaceShip extends Floater  
 {   
 	SpaceShip()
@@ -145,6 +128,68 @@ class SpaceShip extends Floater
 
 	public void setPointDirection(int degrees){myPointDirection = degrees;}
 	public double getPointDirection(){return (int)myPointDirection;}
+}
+class Asteroid extends Floater
+{
+	public int aSize;
+	Asteroid()
+	{
+		aSize = 8;
+		corners = 7;
+		xCorners = new int[corners];
+			xCorners[0] = -(13+aSize);
+			xCorners[1] = (2+aSize);
+			xCorners[2] = (9+aSize);
+			xCorners[3] = (13+aSize);
+			xCorners[4] = (7+aSize);
+			xCorners[5] = -(10+aSize);
+			xCorners[6] = -(19+aSize);
+		yCorners = new int[corners];
+			yCorners[0] = -(12+aSize);
+			yCorners[1] = -(17+aSize);
+			yCorners[2] = -(12+aSize);
+			yCorners[3] = (0+aSize);
+			yCorners[4] = (12+aSize);
+			yCorners[5] = (15+aSize);
+			yCorners[6] = (0+aSize);
+		myColorF = 255;
+		myColorS = 255;
+		myCenterX = Math.random()*width;
+		myCenterY = Math.random()*height;
+		myDirectionX = 0;
+		myDirectionY = 0;
+		myPointDirection = Math.random()*360;
+	}
+
+	public void setX(int x){myCenterX = x;}
+	public int getX(){return (int)myCenterX;}
+	public void setY(int y){myCenterY = y;}
+	public int getY(){return (int)myCenterY;}
+
+	public void setDirectionX(double x){myDirectionX = x;}
+	public double getDirectionX(){return (int)myDirectionX;}
+	public void setDirectionY(double y){myDirectionY = y;}
+	public double getDirectionY(){return (int)myDirectionY;}
+
+	public void setPointDirection(int degrees){myPointDirection = degrees;}
+	public double getPointDirection(){return (int)myPointDirection;}
+}
+class Star 
+{
+	double starX, starY, starSize;
+	int starColor;
+	Star()
+	{
+		starX = Math.random()*width;
+		starY = Math.random()*height;
+		starSize = Math.random()*10;
+		starColor = (int)(Math.random()*255+1);
+	}
+	private void show()
+	{
+		fill(starColor,starColor,starColor);
+		ellipse((float)starX, (float)starY, (float)starSize, (float)starSize);
+	}
 }
 abstract class Floater //Do NOT modify the Floater class! Make changes in the SpaceShip class 
 {
